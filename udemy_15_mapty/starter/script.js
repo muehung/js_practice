@@ -65,6 +65,7 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+
 // let mapEvent;
 
 class App {
@@ -76,8 +77,7 @@ class App {
         // Get user position
         this._getPosition();
         form.addEventListener('submit', this._newWorkout.bind(this))
-        form.addEventListener('change', this._toggleElevationField())
-        this._testWorkout()
+        // form.addEventListener('change', this._toggleElevationField())
     }
     _getPosition() {
         if(navigator.geolocation){
@@ -89,11 +89,11 @@ class App {
         }
     }
     _loadMap(position) {
-            // console.log(position)
+            console.log(position)
             const { latitude } = position.coords;
             const { longitude } = position.coords;
-            // console.log(`https://www.google.com.tw/maps/@${latitude},${longitude}`)
-            // 'coords' is your loaction object
+            // // console.log(`https://www.google.com.tw/maps/@${latitude},${longitude}`)
+            // // 'coords' is your loaction object
             const coords = [latitude, longitude];
             // console.log(coords)
             // console.log(this)
@@ -112,21 +112,23 @@ class App {
         form.classList.remove('hidden');
         inputDistance.focus();
     }
-    _toggleElevationField() {
-        inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
-        inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
+    // _toggleElevationField() {
+    //     inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
+    //     inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
 
-    }
+    // }
     _newWorkout(e) {
-        const validInputs = (...inputs) =>
-          inputs.every(inp => Number.isFinite(inp),
-        //   inputs.every(inp => inp > 0)
-          );
+
+        console.log('_newWorkout')
+        
+        // const validInputs = (...inputs) =>
+        //   inputs.every(inp => Number.isFinite(inp),
+        // //   inputs.every(inp => inp > 0)
+        //     console.log(inputs)
+        //   );
         
         e.preventDefault();
 
-        // Hide form + clear input fields
-        inputDistance.value =  inputDuration.value = inputCadence.value = inputElevation.value = '';
 
         // Get data from the form
         const type = inputType.value;
@@ -137,16 +139,22 @@ class App {
 
         // If activity running, create running object
         if( type === 'running') {
-            const cadence = +inputCadence.value;
-            console.log(`running: ${+inputCadence.value}`);
-            if(!validInputs(distance, duration, cadence) || cadence<=0) return alert('Input have to be positive numbers!')
+            const coords = this.coords;
+            const cadence = inputCadence.value;
+            // if(!validInputs(distance, duration, cadence) || cadence<=0) return alert('Input have to be positive numbers!');
+            console.log(coords, cadence)
+
+            Workout = new Running (coords, distance, duration, cadence);
+            console.log(Workout)
         }
 
         // If activity cycling, create cycling object
         if ( type === 'cycling') {
-            const elevation = +inputElevation.value;
-            console.log(`cycling: ${elevation}`);
-            if(!validInputs(distance, duration, elevation) || elevation<=0) return alert('Input have to be positive numbers!')
+            const elevation = inputElevation.value;
+            // if(!validInputs(distance, duration, elevation) || elevation<=0) return alert('Input have to be positive numbers!');
+
+            Workout = new Cycling (0, distance, duration, elevation);
+            console.log(Workout)
         }
 
         // Add  new object to workout array
@@ -171,8 +179,8 @@ class App {
 
     // Render workout on list
 
-    
-
+    // Hide form + clear input fields
+    inputDistance.value =  inputDuration.value = inputCadence.value = inputElevation.value = '';
 
     }
 }
@@ -182,6 +190,6 @@ const app = new App();
 
 
 
-// form.addEventListener('submit', function(e){ });
+
 
 
