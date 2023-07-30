@@ -579,6 +579,8 @@ var _webImmediateJs = require("core-js/modules/web.immediate.js");
 var _modelJs = require("./model.js");
 var _recipeViewJs = require("./views/recipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
+var _searchViewJs = require("../js/views/searchView.js");
+var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
 var _runtime = require("regenerator-runtime/runtime");
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
@@ -599,13 +601,27 @@ const controlRecipes = async function() {
         (0, _recipeViewJsDefault.default).renderError();
     }
 };
+const controlSearchResults = async function() {
+    try {
+        // 1) saerch 
+        const query = (0, _searchViewJsDefault.default).getQuery();
+        if (!query) return;
+        //2) load result
+        await _modelJs.loadSearchResults(query);
+        console.log(_modelJs.state.search);
+    } catch (err) {
+        console.log(err);
+    }
+};
+controlSearchResults();
 // Publisher-Subscriber pattern
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
+    (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
 };
 init();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime/runtime":"dXNgZ","core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime/runtime":"dXNgZ","core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","../js/views/searchView.js":"9OQAM"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -2618,15 +2634,20 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
 var _config = require("../js/config");
 var _helper = require("../js/helper");
 const state = {
-    recipe: {}
+    recipe: {},
+    search: {
+        query: "",
+        result: []
+    }
 };
 const loadRecipe = async function(id) {
     try {
         const data = await (0, _helper.getJSON)(`${(0, _config.API_URL)}/${id}`);
-        console.log(data);
+        // console.log(data);
         const { recipe } = data.data;
         state.recipe = {
             id: recipe.id,
@@ -2638,7 +2659,25 @@ const loadRecipe = async function(id) {
             cookTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
-        console.log(state.recipe);
+    //   console.log(state.recipe);
+    } catch (err) {
+        console.error(`${err} !!!`);
+        throw err;
+    }
+};
+const loadSearchResults = async function(query) {
+    try {
+        state.search.query = query;
+        const result = await (0, _helper.getJSON)(`${(0, _config.API_URL)}?search=${query}`);
+        // console.log(result);
+        state.search.result = result.data.recipes.map((recipe)=>{
+            return {
+                id: recipe.id,
+                imgUrl: recipe.image_url,
+                publisher: recipe.publisher,
+                title: recipe.title
+            };
+        });
     } catch (err) {
         console.error(`${err} !!!`);
         throw err;
@@ -3121,6 +3160,28 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
+},{}],"9OQAM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    #parentEl = document.querySelector(".search");
+    getQuery() {
+        const query = this.#parentEl.querySelector(".search__field").value;
+        this.#claerInput();
+        return query;
+    }
+    #claerInput() {
+        this.#parentEl.querySelector(".search__field").value = "";
+    }
+    addHandlerSearch(handler) {
+        this.#parentEl.addEventListener("submit", function(e) {
+            e.preventDefault();
+            handler(); // 296. 20:45 control searchResults function
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
 
 //# sourceMappingURL=index.e37f48ea.js.map
