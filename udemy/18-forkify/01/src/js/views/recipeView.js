@@ -1,5 +1,5 @@
 import icons from '../../img/icons.svg';
-import { Fraction } from 'fractional'; // 拿套件下第一層
+import { Fraction } from 'fractional'; // {} 拿套件下第一層
 // import { Fraction as apple } from 'fractional'; // 拿套件下第一層 Fraction 把它叫做 apple 來用
 
 // var Fraction = FractionLib.Fraction
@@ -34,6 +34,12 @@ class RecipeView {
         this.#parentElement.insertAdjacentHTML('afterbegin', markup);
         // // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
       };
+
+    addHandlerRender(handler){
+        // window.addEventListener('hashchange', getRecipe);
+        // window.addEventListener('load', getRecipe)
+        ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+    }
 
     #generateMarkup() {
         return `
