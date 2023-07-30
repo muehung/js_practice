@@ -595,7 +595,8 @@ const controlRecipes = async function() {
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     // 可替換成 const recipeView = new recipeView(model.state.recipe);???
     } catch (err) {
-        console.log(err);
+        // console.log(err);
+        (0, _recipeViewJsDefault.default).renderError();
     }
 };
 // Publisher-Subscriber pattern
@@ -2640,6 +2641,7 @@ const loadRecipe = async function(id) {
         console.log(state.recipe);
     } catch (err) {
         console.error(`${err} !!!`);
+        throw err;
     }
 };
 
@@ -2691,6 +2693,7 @@ var _fractional = require("fractional"); // {} 拿套件下第一層
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #errorMsg = "找不到食譜，試試其他的！";
     render(data) {
         this.#data = data;
         const markup = this.#generateMarkup();
@@ -2701,17 +2704,31 @@ class RecipeView {
     #clear() {
         this.#parentElement.innerHTML = "";
     }
-    renderSpinner = function() {
+    renderSpinner() {
         const markup = `
               <div class="spinner">
                 <svg>
                   <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
                 </svg>
               </div>`;
-        this.#parentElement.innerHTML = "";
+        this.#clear;
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     // // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
-    };
+    }
+    renderError(msg = this.#errorMsg) {
+        const markup = `
+        <div class="error">
+            <div>
+                <svg>
+                <use href="${(0, _iconsSvgDefault.default)}.svg#icon-alert-triangle"></use>
+                </svg>
+            </div>
+            <p>${msg}</p>
+        </div>
+        `;
+        this.#clear;
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
     addHandlerRender(handler) {
         // window.addEventListener('hashchange', getRecipe);
         // window.addEventListener('load', getRecipe)

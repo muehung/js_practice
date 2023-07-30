@@ -26,7 +26,8 @@ const controlRecipes = async function(){
       // 可替換成 const recipeView = new recipeView(model.state.recipe);???
   }
   catch(err){
-    console.log(err)
+    // console.log(err);
+    recipeView.renderError();
   }
   
 };
