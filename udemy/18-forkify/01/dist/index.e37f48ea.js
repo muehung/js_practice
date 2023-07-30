@@ -579,33 +579,32 @@ var _webImmediateJs = require("core-js/modules/web.immediate.js");
 var _modelJs = require("./model.js");
 var _recipeViewJs = require("./views/recipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
-var _recipeViewJs1 = require("../js/views/recipeView.js");
 var _runtime = require("regenerator-runtime/runtime");
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
-const getRecipe = async function() {
+const controlRecipes = async function() {
     try {
         const id = window.location.hash.slice(1);
         // const key = '48f4c4a2-7d2d-4960-befa-c155bb5fb999';
-        if (!id) return;
+        if (!id) return; // 每個食譜的 id
         (0, _recipeViewJsDefault.default).renderSpinner();
         // 1) loading recipe
         await _modelJs.loadRecipe(id);
         // 2) Rendering recipe
         // render 自定義方法，給 View用，所有 View都將繼承此方法 by助教 292.
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
-        // 可替換成 const recipeView = new recipeView(model.state.recipe);???
-        (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+    // 可替換成 const recipeView = new recipeView(model.state.recipe);???
     } catch (err) {
-        alert(err);
+        console.log(err);
     }
 };
+// Publisher-Subscriber pattern
 const init = function() {
-    (0, _recipeViewJsDefault.default).addHandlerRender(getRecipe);
+    (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
 };
 init();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime/runtime":"dXNgZ","core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","../js/views/recipeView.js":"l60JC"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","regenerator-runtime/runtime":"dXNgZ","core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
