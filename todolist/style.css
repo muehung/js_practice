@@ -1,0 +1,48 @@
+
+.todolist {
+	display: flex;
+	gap: 20px;
+	margin: 20px 20px 20px 0;
+}
+
+.todo-input {
+	display: inline-block;
+}
+.todo-input input {
+	padding: 5px 10px;
+	display: inline-block;
+}
+
+
+.result-area {
+	border-top: 2px solid #eee;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.list-group-item {
+	display: flex;
+	justify-content: space-between;
+	/*flex-direction: row-reverse;*/
+	justify-content: flex-end;
+}
+.list-group-item .input {
+	padding: 3px;
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+}
+
+.btn {
+	width: fit-content;
+	white-space: nowrap;
+	border: 1px solid #aaa;
+	margin: 3px;
+}
+.list-group-item .btnDel{}
+.list-group-item .btnEdit{ }
+
+.list-group-item .btnDel:hover,
+.list-group-item .btnDel:focus,
+.list-group-item .btnEdit:hover,
+.list-group-item .btnEdit:focus { background-color: #cccccc; }
