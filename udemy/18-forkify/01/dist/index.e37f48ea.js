@@ -606,22 +606,19 @@ const controlRecipes = async function() {
 };
 const controlSearchResults = async function() {
     try {
-        // resultView.renderSpinner();
-        // recipeView._parentElement.classList.add('text-danger');
-        // console.log(resultView)
+        (0, _resultViewJsDefault.default).renderSpinner();
         // 1) saerch 
         const query = (0, _searchViewJsDefault.default).getQuery();
         if (!query) return;
         //2) load results
         await _modelJs.loadSearchResults(query);
         //3) Render results
-        // console.log(model.state.search.result);
-        (0, _resultViewJsDefault.default).render(_modelJs.state.search.result);
+        // resultView.render(model.state.search.result);
+        (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage());
     } catch (err) {
         console.log(err);
     }
 };
-controlSearchResults();
 // Publisher-Subscriber pattern
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
@@ -2026,13 +2023,16 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
+parcelHelpers.export(exports, "getSearchResultPage", ()=>getSearchResultPage);
 var _config = require("../js/config");
 var _helper = require("../js/helper");
 const state = {
     recipe: {},
     search: {
         query: "",
-        result: []
+        result: [],
+        page: 1,
+        resultPerPage: (0, _config.RESULT_PER_PAGE)
     }
 };
 const loadRecipe = async function(id) {
@@ -2074,6 +2074,15 @@ const loadSearchResults = async function(query) {
         throw err;
     }
 };
+const getSearchResultPage = function(currentePage = state.search.page) {
+    state.search.page = currentePage;
+    const startItem = (currentePage - 1) * state.search.resultPerPage;
+    // start from array[0] * 10 items per page
+    const endItem = currentePage * state.search.resultPerPage;
+    // on slice('', end) final choose array[9]
+    return state.search.result.slice(startItem, endItem);
+// .slice(): new a array (begin, end before)
+};
 
 },{"../js/config":"k5Hzs","../js/helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
 // variables of application
@@ -2081,8 +2090,10 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL);
 parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
+parcelHelpers.export(exports, "RESULT_PER_PAGE", ()=>RESULT_PER_PAGE);
 const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes";
 const TIMEOUT_SEC = 5;
+const RESULT_PER_PAGE = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -2272,7 +2283,6 @@ class View {
     // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
     }
     _clear() {
-        // console.log(this._parentElement)
         this._parentElement.innerHTML = "";
     }
     renderSpinner() {
@@ -2631,7 +2641,7 @@ class resultView extends (0, _viewJsDefault.default) {
     _errorMsg = "沒有搜尋到，請再試其他關鍵字！";
     _generateMarkup() {
         // console.log(this._data); // a Array
-        return this._data.map(this._generateMarkupPreview).join("-");
+        return this._data.map(this._generateMarkupPreview).join("");
     }
     _generateMarkupPreview(result) {
         return `

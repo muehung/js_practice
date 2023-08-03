@@ -8,7 +8,7 @@ class resultView extends View {
 
     _generateMarkup(){
         // console.log(this._data); // a Array
-        return this._data.map(this._generateMarkupPreview).join('-');
+        return this._data.map(this._generateMarkupPreview).join('');
         
     }
     _generateMarkupPreview(result){

@@ -43,8 +43,6 @@ const controlSearchResults = async function(){
   try {
 
     resultView.renderSpinner();
-    // recipeView._parentElement.classList.add('text-danger');
-    // console.log(resultView)
 
     // 1) saerch 
     const query = searchView.getQuery();
@@ -54,15 +52,13 @@ const controlSearchResults = async function(){
     await model.loadSearchResults(query);
 
     //3) Render results
-    // console.log(model.state.search.result);
-    resultView.render(model.state.search.result);
-    
+    // resultView.render(model.state.search.result);
+    resultView.render(model.getSearchResultPage());
 
   } catch(err) {
     console.log(err)
   }
 }
-controlSearchResults();
 
 // Publisher-Subscriber pattern
 const init = function(){
