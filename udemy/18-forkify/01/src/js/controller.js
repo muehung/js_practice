@@ -1,17 +1,17 @@
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
-import searchView from '../js/views/searchView.js'
-import resultView from '../js/views/resultView.js'
+import searchView from './views/searchView.js';
+import resultView from './views/resultView.js';
+import paginationView from './views/paginationView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime'
-import searchView from '../js/views/searchView.js';
 
 
 // from parcel !?
-if(module.hot) {
-  module.hot.accept()
-}
+// if(module.hot) {
+//   module.hot.accept()
+// }
 
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
@@ -55,15 +55,34 @@ const controlSearchResults = async function(){
     // resultView.render(model.state.search.result);
     resultView.render(model.getSearchResultPage());
 
+    //4) pagination
+    paginationView.render(model.state.search); //array
+
   } catch(err) {
     console.log(err)
   }
 }
 
+const controlPagination = function(goToPage){
+
+  //1) Render new results
+  // resultView.render(model.state.search.result);
+  resultView.render(model.getSearchResultPage(goToPage));
+
+  //2) pagination
+  paginationView.render(model.state.search); //array
+
+  console.log(goToPage);
+  console.log('page controller');
+
+}
+
+
 // Publisher-Subscriber pattern
 const init = function(){
   recipeView.addHandlerRender(controlRecipes);
-  searchView.addHandlerSearch(controlSearchResults)
+  searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 }
 
 init();

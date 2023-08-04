@@ -7,6 +7,7 @@ export default class View {
         this._data = data;
         const markup = this._generateMarkup();
         this._clear();
+        console.log(this._parentElement);
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
   // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
     }

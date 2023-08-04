@@ -579,13 +579,17 @@ var _webImmediateJs = require("core-js/modules/web.immediate.js");
 var _modelJs = require("./model.js");
 var _recipeViewJs = require("./views/recipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
-var _searchViewJs = require("../js/views/searchView.js");
+var _searchViewJs = require("./views/searchView.js");
 var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
-var _resultViewJs = require("../js/views/resultView.js");
+var _resultViewJs = require("./views/resultView.js");
 var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
+var _paginationViewJs = require("./views/paginationView.js");
+var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
 var _runtime = require("regenerator-runtime/runtime");
 // from parcel !?
-if (module.hot) module.hot.accept();
+// if(module.hot) {
+//   module.hot.accept()
+// }
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
 const controlRecipes = async function() {
@@ -615,18 +619,30 @@ const controlSearchResults = async function() {
         //3) Render results
         // resultView.render(model.state.search.result);
         (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage());
+        //4) pagination
+        (0, _paginationViewJsDefault.default).render(_modelJs.state.search); //array
     } catch (err) {
         console.log(err);
     }
+};
+const controlPagination = function(goToPage) {
+    //1) Render new results
+    // resultView.render(model.state.search.result);
+    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage(goToPage));
+    //2) pagination
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search); //array
+    console.log(goToPage);
+    console.log("page controller");
 };
 // Publisher-Subscriber pattern
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
+    (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
 };
 init();
 
-},{"core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","../js/views/searchView.js":"9OQAM","../js/views/resultView.js":"f70O5","regenerator-runtime/runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"49tUX":[function(require,module,exports) {
+},{"core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","regenerator-runtime/runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","./views/paginationView.js":"6z7bi"}],"49tUX":[function(require,module,exports) {
 "use strict";
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2279,6 +2295,7 @@ class View {
         this._data = data;
         const markup = this._generateMarkup();
         this._clear();
+        console.log(this._parentElement);
         this._parentElement.insertAdjacentHTML("afterbegin", markup);
     // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
     }
@@ -2604,69 +2621,7 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}],"9OQAM":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _viewJs = require("../views/View.js");
-var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-class SearchView extends (0, _viewJsDefault.default) {
-    _parentElment = document.querySelector(".search");
-    getQuery() {
-        const query = this._parentElment.querySelector(".search__field").value;
-        this._claerInput();
-        return query;
-    }
-    _claerInput() {
-        this._parentElment.querySelector(".search__field").value = "";
-    }
-    addHandlerSearch(handler) {
-        this._parentElment.addEventListener("submit", function(e) {
-            e.preventDefault();
-            handler(); // 296. 20:45 control searchResults function
-        });
-    }
-}
-exports.default = new SearchView();
-
-},{"../views/View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f70O5":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _viewJs = require("../views/View.js");
-var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-var _iconsSvg = require("../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class resultView extends (0, _viewJsDefault.default) {
-    // 對應到 View.js 的 this._parentElement
-    _parentElement = document.querySelector(".results");
-    _errorMsg = "沒有搜尋到，請再試其他關鍵字！";
-    _generateMarkup() {
-        // console.log(this._data); // a Array
-        return this._data.map(this._generateMarkupPreview).join("");
-    }
-    _generateMarkupPreview(result) {
-        return `
-            <li class="preview">
-                <a class="preview__link" href="#${result.id}">
-                <figure class="preview__fig">
-                    <img src="${result.imgUrl}" alt="Test" />
-                </figure>
-                <div class="preview__data">
-                    <h4 class="preview__title">${result.title}</h4>
-                    <p class="preview__publisher">${result.publisher}</p>
-                    <!-- <div class="preview__user-generated">
-                            <svg>
-                            <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
-                            </svg>
-                        </div> -->
-                </div>
-                </a>
-            </li>
-        `;
-    }
-}
-exports.default = new resultView();
-
-},{"../views/View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../img/icons.svg":"cMpiy"}],"dXNgZ":[function(require,module,exports) {
+},{}],"dXNgZ":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -3253,6 +3208,137 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
+},{}],"9OQAM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("../views/View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+class SearchView extends (0, _viewJsDefault.default) {
+    _parentElment = document.querySelector(".search");
+    getQuery() {
+        const query = this._parentElment.querySelector(".search__field").value;
+        this._claerInput();
+        return query;
+    }
+    _claerInput() {
+        this._parentElment.querySelector(".search__field").value = "";
+    }
+    addHandlerSearch(handler) {
+        this._parentElment.addEventListener("submit", function(e) {
+            e.preventDefault();
+            handler(); // 296. 20:45 control searchResults function
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"../views/View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f70O5":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("../views/View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+var _iconsSvg = require("../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class resultView extends (0, _viewJsDefault.default) {
+    // 對應到 View.js 的 this._parentElement
+    _parentElement = document.querySelector(".results");
+    _errorMsg = "沒有搜尋到，請再試其他關鍵字！";
+    _generateMarkup() {
+        // console.log(this._data); // a Array
+        return this._data.map(this._generateMarkupPreview).join("");
+    }
+    _generateMarkupPreview(result) {
+        return `
+            <li class="preview">
+                <a class="preview__link" href="#${result.id}">
+                <figure class="preview__fig">
+                    <img src="${result.imgUrl}" alt="Test" />
+                </figure>
+                <div class="preview__data">
+                    <h4 class="preview__title">${result.title}</h4>
+                    <p class="preview__publisher">${result.publisher}</p>
+                    <!-- <div class="preview__user-generated">
+                            <svg>
+                            <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
+                            </svg>
+                        </div> -->
+                </div>
+                </a>
+            </li>
+        `;
+    }
+}
+exports.default = new resultView();
+
+},{"../views/View.js":"5cUXS","../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6z7bi":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./View");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("./../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class paginationView extends (0, _viewDefault.default) {
+    _parentElement = document.querySelector(".pagination");
+    addHandlerClick(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--inline");
+            this._clear;
+            console.log(btn);
+            if (!btn) return;
+            const goToPage = +btn.dataset.goto; // === Number(btn.dataset.goto)
+            // console.log(goToPage);
+            handler(goToPage);
+        });
+    }
+    _generateMarkup() {
+        const currentPage = this._data.page;
+        // data = search results by controller
+        const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
+        console.log("numPage:" + numPage, "currentPage: " + currentPage);
+        //page 1 && others
+        // 現在頁碼 === 1 && 所有頁碼 > 1
+        if (currentPage === 1 && numPage > 1) {
+            console.log("page 1 & others");
+            return `
+            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+        }
+        //page last 現在頁碼 === 所有頁碼
+        if (currentPage === numPage && numPage > 1) return `
+                <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+                    <svg class="search__icon">
+                    <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+                    </svg>
+                    <span>Page ${currentPage - 1}</span>
+                </button>
+            `;
+        // page 2 ~ others
+        if (currentPage < numPage) return `
+            <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+                </svg>
+                <span>Page ${currentPage - 1}</span>
+            </button>
+            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+        //page 1 no others
+        console.log("page 1 only");
+        return "";
+    }
+}
+exports.default = new paginationView();
+
+},{"./View":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./../../img/icons.svg":"cMpiy"}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
 
 //# sourceMappingURL=index.e37f48ea.js.map
