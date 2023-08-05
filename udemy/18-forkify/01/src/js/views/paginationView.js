@@ -7,7 +7,6 @@ class paginationView extends View {
     addHandlerClick(handler){
         this._parentElement.addEventListener('click', function(e){
             const btn = e.target.closest('.btn--inline');
-            console.log(btn);
             if(!btn) return
             const goToPage = +btn.dataset.goto; // === Number(btn.dataset.goto)
             // console.log(goToPage);
@@ -22,12 +21,11 @@ class paginationView extends View {
 
         // data = search results by controller
         const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
-        console.log('numPage:' + numPage, 'currentPage: ' + currentPage);
+        // console.log('numPage:' + numPage, 'currentPage: ' + currentPage);
 
         //page 1 && others
         // 現在頁碼 === 1 && 所有頁碼 > 1
         if(currentPage === 1 && numPage > 1) {
-            console.log('page 1 & others')
             return `
             <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
                 <span>Page ${currentPage + 1}</span>
@@ -69,7 +67,6 @@ class paginationView extends View {
         }
 
         //page 1 no others
-        console.log('page 1 only')
         return ''
     }
 };

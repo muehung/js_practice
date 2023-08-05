@@ -628,11 +628,11 @@ const controlSearchResults = async function() {
 const controlPagination = function(goToPage) {
     //1) Render new results
     // resultView.render(model.state.search.result);
-    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage(goToPage));
+    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage(goToPage)); //array
+    console.log();
     //2) pagination
-    (0, _paginationViewJsDefault.default).render(_modelJs.state.search); //array
-    console.log(goToPage);
-    console.log("page controller");
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+    _modelJs.state.search.page = 1; // init page
 };
 // Publisher-Subscriber pattern
 const init = function() {
@@ -2092,9 +2092,9 @@ const loadSearchResults = async function(query) {
 };
 const getSearchResultPage = function(currentePage = state.search.page) {
     state.search.page = currentePage;
-    const startItem = (currentePage - 1) * state.search.resultPerPage;
+    const startItem = (currentePage - 1) * 10;
     // start from array[0] * 10 items per page
-    const endItem = currentePage * state.search.resultPerPage;
+    const endItem = currentePage * 10;
     // on slice('', end) final choose array[9]
     return state.search.result.slice(startItem, endItem);
 // .slice(): new a array (begin, end before)
@@ -2295,7 +2295,6 @@ class View {
         this._data = data;
         const markup = this._generateMarkup();
         this._clear();
-        console.log(this._parentElement);
         this._parentElement.insertAdjacentHTML("afterbegin", markup);
     // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
     }
@@ -2311,7 +2310,7 @@ class View {
               </div>`;
         this._clear;
         this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    // // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped.???? from MDN
+    // // When inserting HTML into a page by using insertAdjacentHTML be careful not to use user input that hasn't been escaped. from MDN
     }
     renderError(msg = this._errorMsg) {
         const markup = `
@@ -3217,10 +3216,10 @@ class SearchView extends (0, _viewJsDefault.default) {
     _parentElment = document.querySelector(".search");
     getQuery() {
         const query = this._parentElment.querySelector(".search__field").value;
-        this._claerInput();
+        this._clearInput();
         return query;
     }
-    _claerInput() {
+    _clearInput() {
         this._parentElment.querySelector(".search__field").value = "";
     }
     addHandlerSearch(handler) {
@@ -3282,7 +3281,6 @@ class paginationView extends (0, _viewDefault.default) {
     addHandlerClick(handler) {
         this._parentElement.addEventListener("click", function(e) {
             const btn = e.target.closest(".btn--inline");
-            console.log(btn);
             if (!btn) return;
             const goToPage = +btn.dataset.goto; // === Number(btn.dataset.goto)
             // console.log(goToPage);
@@ -3293,12 +3291,10 @@ class paginationView extends (0, _viewDefault.default) {
         const currentPage = this._data.page;
         // data = search results by controller
         const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
-        console.log("numPage:" + numPage, "currentPage: " + currentPage);
+        // console.log('numPage:' + numPage, 'currentPage: ' + currentPage);
         //page 1 && others
         // 現在頁碼 === 1 && 所有頁碼 > 1
-        if (currentPage === 1 && numPage > 1) {
-            console.log("page 1 & others");
-            return `
+        if (currentPage === 1 && numPage > 1) return `
             <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
                 <span>Page ${currentPage + 1}</span>
                 <svg class="search__icon">
@@ -3306,7 +3302,6 @@ class paginationView extends (0, _viewDefault.default) {
                 </svg>
             </button>
             `;
-        }
         //page last 現在頁碼 === 所有頁碼
         if (currentPage === numPage && numPage > 1) return `
                 <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
@@ -3332,7 +3327,6 @@ class paginationView extends (0, _viewDefault.default) {
             </button>
             `;
         //page 1 no others
-        console.log("page 1 only");
         return "";
     }
 }
