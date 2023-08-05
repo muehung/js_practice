@@ -67,14 +67,12 @@ const controlPagination = function(goToPage){
 
   //1) Render new results
   // resultView.render(model.state.search.result);
-  resultView.render(model.getSearchResultPage(goToPage));
+  resultView.render(model.getSearchResultPage(goToPage)); //array
+  console.log()
 
   //2) pagination
-  paginationView.render(model.state.search); //array
-
-  console.log(goToPage);
-  console.log('page controller');
-
+  paginationView.render(model.state.search);
+  model.state.search.page = 1; // init page
 }
 
 
