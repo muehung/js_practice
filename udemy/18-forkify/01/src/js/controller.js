@@ -29,13 +29,10 @@ const controlRecipes = async function(){
        // render 自定義方法，給 View用，所有 View都將繼承此方法 by助教 292.
        // 可替換成 const recipeView = new recipeView(model.state.recipe);
       recipeView.render(model.state.recipe);
-      
-
   }
   catch(err){
     recipeView.renderError();
   }
-  
 };
 
 
@@ -76,9 +73,21 @@ const controlPagination = function(goToPage){
 }
 
 
+const controlServings = function(newServings){
+  // Update the recipe number in state
+  model.updateServings(newServings);
+  
+  // Update the recipe view
+  recipeView.render(model.state.recipe);
+
+}
+
+
+
 // Publisher-Subscriber pattern
 const init = function(){
   recipeView.addHandlerRender(controlRecipes);
+  recipeView.addHandlerUpdateTo(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
 }

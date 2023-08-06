@@ -634,15 +634,22 @@ const controlPagination = function(goToPage) {
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     _modelJs.state.search.page = 1; // init page
 };
+const controlServings = function(newServings) {
+    // Update the recipe number in state
+    _modelJs.updateServings(newServings);
+    // Update the recipe view
+    (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+};
 // Publisher-Subscriber pattern
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
+    (0, _recipeViewJsDefault.default).addHandlerUpdateTo(controlServings);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
     (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
 };
 init();
 
-},{"core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","regenerator-runtime/runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","./views/paginationView.js":"6z7bi"}],"49tUX":[function(require,module,exports) {
+},{"core-js/modules/web.immediate.js":"49tUX","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","./views/paginationView.js":"6z7bi","regenerator-runtime/runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"49tUX":[function(require,module,exports) {
 "use strict";
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2040,6 +2047,7 @@ parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
 parcelHelpers.export(exports, "getSearchResultPage", ()=>getSearchResultPage);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 var _config = require("../js/config");
 var _helper = require("../js/helper");
 const state = {
@@ -2092,12 +2100,23 @@ const loadSearchResults = async function(query) {
 };
 const getSearchResultPage = function(currentePage = state.search.page) {
     state.search.page = currentePage;
-    const startItem = (currentePage - 1) * 10;
+    const startItem = (currentePage - 1) * state.search.resultPerPage;
     // start from array[0] * 10 items per page
-    const endItem = currentePage * 10;
+    const endItem = currentePage * state.search.resultPerPage;
     // on slice('', end) final choose array[9]
     return state.search.result.slice(startItem, endItem);
 // .slice(): new a array (begin, end before)
+};
+const updateServings = function(newServings) {
+    // if(!state.recipe.ingredients) {
+    //     console.log('state.recipe.ingredients')
+    // };
+    state.recipe.ingredients.forEach((ing)=>{
+        ing.quantity = ing.quantity / state.recipe.servings * newServings;
+    // newQuantity = oldQuantity / oldServings * newServings; 
+    });
+    console.log(state.recipe.ingredients);
+    state.recipe.servings = newServings;
 };
 
 },{"../js/config":"k5Hzs","../js/helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
@@ -2190,6 +2209,14 @@ class RecipeView extends (0, _viewJsDefault.default) {
             "load"
         ].forEach((ev)=>window.addEventListener(ev, handler));
     }
+    addHandlerUpdateTo(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btnUpdate");
+            if (!btn) return;
+            const updateTo = +btn.dataset.updateTo;
+            if (+updateTo > 0) handler(+updateTo);
+        });
+    }
     _generateMarkup() {
         return `
         <figure class="recipe__fig">
@@ -2212,15 +2239,15 @@ class RecipeView extends (0, _viewJsDefault.default) {
               <use href="${0, _iconsSvgDefault.default}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
-            <span class="recipe__info-text">servings</span>
+            <span class="recipe__info-text">${this._data.servings === 1 ? "serving" : "servings"}</span>
 
             <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--increase-servings btnUpdate" data-update-to="${this._data.servings - 1}">
                 <svg>
                   <use href="${0, _iconsSvgDefault.default}#icon-minus-circle"></use>
                 </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--increase-servings btnUpdate" data-update-to="${this._data.servings + 1}">
                 <svg>
                   <use href="${0, _iconsSvgDefault.default}#icon-plus-circle"></use>
                 </svg>
@@ -2620,7 +2647,132 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}],"dXNgZ":[function(require,module,exports) {
+},{}],"9OQAM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("../views/View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+class SearchView extends (0, _viewJsDefault.default) {
+    _parentElment = document.querySelector(".search");
+    getQuery() {
+        const query = this._parentElment.querySelector(".search__field").value;
+        this._clearInput();
+        return query;
+    }
+    _clearInput() {
+        this._parentElment.querySelector(".search__field").value = "";
+    }
+    addHandlerSearch(handler) {
+        this._parentElment.addEventListener("submit", function(e) {
+            e.preventDefault();
+            handler(); // 296. 20:45 control searchResults function
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"../views/View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f70O5":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("../views/View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+var _iconsSvg = require("../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class resultView extends (0, _viewJsDefault.default) {
+    // 對應到 View.js 的 this._parentElement
+    _parentElement = document.querySelector(".results");
+    _errorMsg = "沒有搜尋到，請再試其他關鍵字！";
+    _generateMarkup() {
+        // console.log(this._data); // a Array
+        return this._data.map(this._generateMarkupPreview).join("");
+    }
+    _generateMarkupPreview(result) {
+        return `
+            <li class="preview">
+                <a class="preview__link" href="#${result.id}">
+                <figure class="preview__fig">
+                    <img src="${result.imgUrl}" alt="Test" />
+                </figure>
+                <div class="preview__data">
+                    <h4 class="preview__title">${result.title}</h4>
+                    <p class="preview__publisher">${result.publisher}</p>
+                    <!-- <div class="preview__user-generated">
+                            <svg>
+                            <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
+                            </svg>
+                        </div> -->
+                </div>
+                </a>
+            </li>
+        `;
+    }
+}
+exports.default = new resultView();
+
+},{"../views/View.js":"5cUXS","../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6z7bi":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./View");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("./../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class paginationView extends (0, _viewDefault.default) {
+    _parentElement = document.querySelector(".pagination");
+    addHandlerClick(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--inline");
+            if (!btn) return;
+            const goToPage = +btn.dataset.goto; // === Number(btn.dataset.goto)
+            // console.log(goToPage);
+            handler(goToPage);
+        });
+    }
+    _generateMarkup() {
+        const currentPage = this._data.page;
+        // data = search results by controller
+        const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
+        // console.log('numPage:' + numPage, 'currentPage: ' + currentPage);
+        //page 1 && others
+        // 現在頁碼 === 1 && 所有頁碼 > 1
+        if (currentPage === 1 && numPage > 1) return `
+            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+        //page last 現在頁碼 === 所有頁碼
+        if (currentPage === numPage && numPage > 1) return `
+                <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+                    <svg class="search__icon">
+                    <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+                    </svg>
+                    <span>Page ${currentPage - 1}</span>
+                </button>
+            `;
+        // page 2 ~ others
+        if (currentPage < numPage) return `
+            <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+                </svg>
+                <span>Page ${currentPage - 1}</span>
+            </button>
+            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+        //page 1 no others
+        return "";
+    }
+}
+exports.default = new paginationView();
+
+},{"./View":"5cUXS","./../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -3207,131 +3359,6 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"9OQAM":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _viewJs = require("../views/View.js");
-var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-class SearchView extends (0, _viewJsDefault.default) {
-    _parentElment = document.querySelector(".search");
-    getQuery() {
-        const query = this._parentElment.querySelector(".search__field").value;
-        this._clearInput();
-        return query;
-    }
-    _clearInput() {
-        this._parentElment.querySelector(".search__field").value = "";
-    }
-    addHandlerSearch(handler) {
-        this._parentElment.addEventListener("submit", function(e) {
-            e.preventDefault();
-            handler(); // 296. 20:45 control searchResults function
-        });
-    }
-}
-exports.default = new SearchView();
-
-},{"../views/View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f70O5":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _viewJs = require("../views/View.js");
-var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-var _iconsSvg = require("../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class resultView extends (0, _viewJsDefault.default) {
-    // 對應到 View.js 的 this._parentElement
-    _parentElement = document.querySelector(".results");
-    _errorMsg = "沒有搜尋到，請再試其他關鍵字！";
-    _generateMarkup() {
-        // console.log(this._data); // a Array
-        return this._data.map(this._generateMarkupPreview).join("");
-    }
-    _generateMarkupPreview(result) {
-        return `
-            <li class="preview">
-                <a class="preview__link" href="#${result.id}">
-                <figure class="preview__fig">
-                    <img src="${result.imgUrl}" alt="Test" />
-                </figure>
-                <div class="preview__data">
-                    <h4 class="preview__title">${result.title}</h4>
-                    <p class="preview__publisher">${result.publisher}</p>
-                    <!-- <div class="preview__user-generated">
-                            <svg>
-                            <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
-                            </svg>
-                        </div> -->
-                </div>
-                </a>
-            </li>
-        `;
-    }
-}
-exports.default = new resultView();
-
-},{"../views/View.js":"5cUXS","../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6z7bi":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
-var _iconsSvg = require("./../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class paginationView extends (0, _viewDefault.default) {
-    _parentElement = document.querySelector(".pagination");
-    addHandlerClick(handler) {
-        this._parentElement.addEventListener("click", function(e) {
-            const btn = e.target.closest(".btn--inline");
-            if (!btn) return;
-            const goToPage = +btn.dataset.goto; // === Number(btn.dataset.goto)
-            // console.log(goToPage);
-            handler(goToPage);
-        });
-    }
-    _generateMarkup() {
-        const currentPage = this._data.page;
-        // data = search results by controller
-        const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
-        // console.log('numPage:' + numPage, 'currentPage: ' + currentPage);
-        //page 1 && others
-        // 現在頁碼 === 1 && 所有頁碼 > 1
-        if (currentPage === 1 && numPage > 1) return `
-            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
-                <span>Page ${currentPage + 1}</span>
-                <svg class="search__icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
-                </svg>
-            </button>
-            `;
-        //page last 現在頁碼 === 所有頁碼
-        if (currentPage === numPage && numPage > 1) return `
-                <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
-                    <svg class="search__icon">
-                    <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
-                    </svg>
-                    <span>Page ${currentPage - 1}</span>
-                </button>
-            `;
-        // page 2 ~ others
-        if (currentPage < numPage) return `
-            <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
-                <svg class="search__icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
-                </svg>
-                <span>Page ${currentPage - 1}</span>
-            </button>
-            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
-                <span>Page ${currentPage + 1}</span>
-                <svg class="search__icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
-                </svg>
-            </button>
-            `;
-        //page 1 no others
-        return "";
-    }
-}
-exports.default = new paginationView();
-
-},{"./View":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./../../img/icons.svg":"cMpiy"}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
+},{}]},["aD7Zm","aenu9"], "aenu9", "parcelRequire041d")
 
 //# sourceMappingURL=index.e37f48ea.js.map
