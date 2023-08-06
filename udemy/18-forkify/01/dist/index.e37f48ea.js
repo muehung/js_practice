@@ -598,6 +598,8 @@ const controlRecipes = async function() {
         // const key = '48f4c4a2-7d2d-4960-befa-c155bb5fb999';
         if (!id) return; // 每個食譜的 id
         (0, _recipeViewJsDefault.default).renderSpinner();
+        // 0) Update result view added mark
+        (0, _resultViewJsDefault.default).update(_modelJs.getSearchResultPage());
         // 1) loading recipe
         await _modelJs.loadRecipe(id);
         // 2) Rendering recipe
@@ -2705,9 +2707,10 @@ class resultView extends (0, _viewJsDefault.default) {
         return this._data.map(this._generateMarkupPreview).join("");
     }
     _generateMarkupPreview(result) {
+        const id = window.location.hash.slice(1);
         return `
             <li class="preview">
-                <a class="preview__link" href="#${result.id}">
+                <a class="preview__link ${result.id === id ? "preview__link--active" : ""}" href="#${result.id}">
                 <figure class="preview__fig">
                     <img src="${result.imgUrl}" alt="Test" />
                 </figure>

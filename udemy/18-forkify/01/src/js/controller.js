@@ -22,6 +22,10 @@ const controlRecipes = async function(){
     // const key = '48f4c4a2-7d2d-4960-befa-c155bb5fb999';
     if (!id) return; // 每個食譜的 id
     recipeView.renderSpinner();
+
+    // 0) Update result view added mark
+    resultView.update(model.getSearchResultPage());
+
     // 1) loading recipe
     await model.loadRecipe(id);
 
