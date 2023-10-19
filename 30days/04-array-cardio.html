@@ -68,6 +68,7 @@
     // Array.prototype.reduce()
     // 4. How many years did all the inventors live all together?
     const allYear = inventors.reduce((total, inventor)=>{
+      // console.log(total)
       return total + (inventor.passed - inventor.year)
     }, 0); // total = 0
     console.log('allYear')
@@ -75,13 +76,42 @@
 
 
     // 5. Sort the inventors by years lived
+    const yearsOldList = inventors.sort((first,second)=>{
+      const firstYear = first.passed - first.year;
+      const secondYear = second.passed - second.year;
+      if(firstYear > secondYear){
+        return -1
+      } else {
+        return 1
+      }
+    })
+
+    console.log("yearsOldList")
+    console.table(yearsOldList)
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
 
+    // const category = document.querySelector('.mw-category')
+    // const links = Array.from(category.querySelectorAll('a'))
+    // const de = links.map((link)=> {return link.textContent}) // 使用 {要做的事，須加return
+    // textContent(回傳node節點字) vs. innerText 會被css影響}
+    // const de = links
+    //   .map((link)=> link.textContent)
+    //   .filter((streetName)=>streetName.includes('de'))
+
+
+
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
+    console.log(7)
+    const lastNameSort = people.sort((lastGuy,nextGuy)=>{
+      const [alastName, afirstName] = lastGuy.split(', ')
+      const [blastName, bfirstName] = nextGuy.split(', ')
+      return alastName > blastName ? 1 : -1;
+    })
+    console.log(lastNameSort)
 
     // 8. Reduce Exercise
     // Sum up the instances of each of these
