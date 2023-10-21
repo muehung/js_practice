@@ -113,9 +113,70 @@
     })
     console.log(lastNameSort)
 
+
+
+
+    
     // 8. Reduce Exercise
     // Sum up the instances of each of these
     const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+
+    console.log(data.length)
+
+    // array.reduce : 將所有 array 數值總結為一值(could be obj)
+    const transportation = data.reduce((obj,item)=>{
+      if(!obj[item]){
+        obj[item] = 0
+      }
+      obj[item]++
+      // console.log(item)
+      return obj
+    }, {});
+    // #loop 1:
+    // obj = {} // reduce 第二個用來初始化的值
+    // !obj[car] = 0 //true
+    // obj[car] = 0
+    // obj[car] = +1
+    // return obj
+    
+    // #loop 2:
+    // obj = {car: 1;} // save from loop 1
+    // !obj[car] = 0 // false
+    // obj[car] = 1+1
+    // return obj
+    
+    console.log("transportation")
+    console.log(transportation)
+
+    // Object.keys(transportation).length // 取得物件內有幾個值
+
+
+    // console.log('-------test ')
+    // const test = data.reduce((obj)=>{
+    //   console.log(obj)
+    //   if(obj = NaN || !obj){
+    //     obj = 0
+    //     console.log('!obj')
+    //   }
+    //   obj++
+    //   console.log(obj)
+    //   return obj
+    // }, {});
+
+    // console.log("test")
+    // console.log(test)
+
+    // #loop 1
+    // obj = {}
+    // !obj // false
+    // obj+1 // NaN
+
+    // #loop 2
+    // obj = 0
+    // obj+1 // 1
+
+    // #loop 3
+    // obj = 2
 
   </script>
 </body>
