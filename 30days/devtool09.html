@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Console Tricks!</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+
+  <p onClick="makeGreen()" class="wow">×BREAK×DOWN×</p>
+
+  <a href="">This is a link</a>
+
+  <script>
+    const dogs = [{ name: 'Snickers', age: 2 }, { name: 'hugo', age: 8 }];
+
+    function makeGreen() {
+      console.log(this)
+      const p = document.querySelector('p');
+      p.style.color = '#BADA55';
+      p.style.fontSize = '50px';
+    }
+
+    // Regular
+    console.log('lolololo')
+
+    // Interpolated
+    // console.log('%s')
+
+    // Styled
+    console.log('%c我是厲害的字 Oh', 'font-size: 30px; background-color: #f00; padding: 5px;');
+
+    // warning!
+    console.warn('Warning lol')
+
+    // Error :|
+    console.error('Errrrrooooor');
+    console.log('-------------')
+
+    // Info
+    console.info('Some Infomations')
+    console.log('-------------')
+
+    // Testing (assertion)
+    // https://developer.mozilla.org/zh-TW/docs/Web/API/console/assert_static
+    const testP = document.querySelector('p')
+    console.assert(1+1 === 7, '1+1 === 2, not 7')
+    console.assert(1+1 !== 2, '7777', {a: 1, b: 3})
+    console.assert(1+1 !== 2, {a: 1, b: 3})
+    console.assert(testP.classList.contains('wow'), 'WWWWWWWWoooooooWWW')
+    console.log('-------------')
+
+    // clearing
+    // console.clear()
+
+    // Viewing DOM Elements
+    console.log(testP)
+    console.dir(testP)
+    console.log('-------------')
+
+    // Grouping together
+    dogs.forEach(dog=> console.log(`This is ${dog.name}, ${dog.age} years old, human's ${dog.age *7} years old`))
+    dogs.forEach( function(dog){
+      console.group(`${dog.name}`)
+      console.log(`This is ${dog.name}`)
+      console.log(`This is ${dog.age}`)
+      console.groupEnd()
+      // console.groupEnd(`${dog.name}`)
+    })
+    console.log('-------------')
+
+    dogs.forEach( function(dog){
+      console.groupCollapsed(`${dog.name}`)  // 只是合起來，比較簡潔
+      console.log(`This is ${dog.name}`)
+      console.log(`This is ${dog.age}`)
+      console.groupEnd()
+      // console.groupEnd(`${dog.name}`)
+    })
+    
+    // counting
+    console.count('Mue')
+    console.count('Guggie')
+    console.count('Guggie')
+    console.count('Mue')
+    console.count('Mue')
+
+    console.log('-------------')
+
+    // timing ( like performance.now )
+    console.time('fetch data') // ????
+
+    fetch('https://api.github.com/users/wesbos')
+      .then(data => data.json())
+      .then(data => {
+        console.timeEnd('fetch data');
+        console.log(data)
+        console.log(data.updated_at)
+      })
+
+    // why cannot use try catch ????
+    // try {
+    //   const res = fetch('https://api.github.com/users/wesbos');
+    //   console.log(res)
+    //   // const data = res.json();
+    //   console.timeEnd('fetch data') //
+    //   console.log(res)
+    //   console.log(res.created_at)
+    // } catch(e){
+    //   console.error(e)
+    // }
+
+
+    // table
+    console.log('------ console.table -------')
+    console.table(dogs)
+    console.log('------ console.table -------')
+    
+
+  </script>
+</body>
+</html>
