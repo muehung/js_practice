@@ -98,37 +98,46 @@
 
 <script>
     const checkboxGroup = document.querySelectorAll('input[type="checkbox"]');
+
+    // 1. listen every checkbox
+    checkboxGroup.forEach( checkbox => checkbox.addEventListener('click', handlerClick) );
+
+    let inBetween = false; // switch btn    
+    let lastItem;
+    function handlerClick(e){
+
+    // 2. forEach loop every checkbox, 
+    // 3. when checked & shift down, => if this or last => switch btn
+    // 3-2. last item empty => has previus this.
+    // 4. when checked & shift down, => if not this or last => switch === true => checked
+      if(e.shiftKey && this.checked){
+          checkboxGroup.forEach((checkbox)=> {
+            console.log(checkbox)
+            if(checkbox === this || checkbox === lastItem){
+              inBetween = !inBetween;
+              console.log('!inBetween')
+            } else {
+              if(inBetween) {
+                checkbox.checked = true
+              }
+            }
+          })
+      }
+      lastItem = this;
+    };
+
+
+    
+
+    
+
+    
+
     // const handleShift = function(e){
     //   // if e.shift down && checked
     //   if(e.shiftKey && this.checked) {
     //     console.log('e.shift')
-    //   const lastItem = this;
-        
-    //   }
-    // } 
-  
-    
-
-    // 1. addEventListener on all inputs
-    // checkboxGroup.forEach(function(e){
-    //     console.log(e) //<input>
-    //     console.log(this.checked) // window
-    //     e.addEventListener('click', handleShift)
-    //   }
-    // );
-
-    // // 2. when input checked && shift down
-    // const arr = [];
-    // for(let i = 0; i > checkboxGroup.length; i++){
-    //     arr.push(this)
-    //     if(i=0 && this.checked){
-    //       firstItem = this;
-    //       console.log(`i=0, ${this}`)
-    //     }
-    //     if(i)
-    //     if(lastItem.checked){ return }
-    // }
-
+    //   const lastItem = thisZ
     // if(e.shiftKey && this.checked) {}
     // 3. note this is first item
     // 4. when input checked && shift down again
@@ -138,24 +147,24 @@
 
 
     // 1. addEventListener on all inputs
-    checkboxGroup.forEach(function(e){
-        // console.log(e) //<input>
-        // console.log(this.checked) // window
-        this.addEventListener('click', handleShift)
-      }
-    );
+    // checkboxGroup.forEach(function(e){
+    //     // console.log(e) //<input>
+    //     // console.log(this.checked) // window
+    //     this.addEventListener('click', handleShift)
+    //   }
+    // );
 
-    // 2. when input checked && shift down, push in array
-    const arr = [];
-    const handleShift = function(e){
-      console.log(e)
-      console.log(this)
-      if(e.shiftKey && this.checked){
-        arr.push(this)
-      }
-    }
+    // // 2. when input checked && shift down, push in array
+    // const arr = [];
+    // const handleShift = function(e){
+    //   console.log(e)
+    //   console.log(this)
+    //   if(e.shiftKey && this.checked){
+    //     arr.push(this)
+    //   }
+    // }
 
-    console.log(arr)
+    // console.log(arr)
 
     // 3. array items all checked
 
@@ -164,6 +173,9 @@
 
     // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/shiftKey
     // https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+
+    // 請使用 HTML5 input (en-US) event 代替 KeyboardEvent
+    // https://developer.mozilla.org/zh-TW/docs/Web/API/KeyboardEvent
 </script>
 </body>
 </html>
