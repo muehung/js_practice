@@ -99,13 +99,9 @@
 <script>
     const checkboxGroup = document.querySelectorAll('input[type="checkbox"]');
 
-    // 1. listen every checkbox
-    checkboxGroup.forEach( checkbox => checkbox.addEventListener('click', handlerClick) );
-
     let inBetween = false; // switch btn    
     let lastItem;
     function handlerClick(e){
-
     // 2. forEach loop every checkbox, 
     // 3. when checked & shift down, => if this or last => switch btn
     // 3-2. last item empty => has previus this.
@@ -126,48 +122,8 @@
       lastItem = this;
     };
 
-
-    
-
-    
-
-    
-
-    // const handleShift = function(e){
-    //   // if e.shift down && checked
-    //   if(e.shiftKey && this.checked) {
-    //     console.log('e.shift')
-    //   const lastItem = thisZ
-    // if(e.shiftKey && this.checked) {}
-    // 3. note this is first item
-    // 4. when input checked && shift down again
-    // 5. this is last item
-    // 6. between first && last
-    // 7. checked
-
-
-    // 1. addEventListener on all inputs
-    // checkboxGroup.forEach(function(e){
-    //     // console.log(e) //<input>
-    //     // console.log(this.checked) // window
-    //     this.addEventListener('click', handleShift)
-    //   }
-    // );
-
-    // // 2. when input checked && shift down, push in array
-    // const arr = [];
-    // const handleShift = function(e){
-    //   console.log(e)
-    //   console.log(this)
-    //   if(e.shiftKey && this.checked){
-    //     arr.push(this)
-    //   }
-    // }
-
-    // console.log(arr)
-
-    // 3. array items all checked
-
+    // 1. listen every checkbox
+    checkboxGroup.forEach( checkbox => checkbox.addEventListener('click', handlerClick) );
 
 
 
