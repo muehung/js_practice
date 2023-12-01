@@ -1,8 +1,9 @@
 // Elements
 const PlayerWrapper = document.querySelector('.player')
 const video = document.querySelector('.viewer')
+const control = document.querySelector('.player__controls')
 const progress = document.querySelector('.progress')
-const progressBar = document.querySelector('.player__controls')
+const progressFilled = document.querySelector('.progress__filled')
 const toggle = document.querySelector('.toggle')
 const dataButtons = document.querySelectorAll('[data-skip]')
 const inputRanges = document.querySelectorAll('.player__slider')
@@ -27,12 +28,32 @@ function handlePlayToggle(){
     toggle.textContent = icon;
     
 }
+
 function handleProgress(){
-    console.log('progress')
+    console.log('progress');
+    let percent = (video.currentTime / video.duration) * 100
+    // console.log(video.currentTime)
+    // console.log(video.duration)
+    progressFilled.style.flexBasis = `${percent}%`; // 0 ~ 100 (%)
+    // console.log(`percent: ${percent}%`)
+}
+
+function handleProgressClick(e) {
+    // let percent = video.duration
+    // video.currentTime = percent;
+    // console.log(e)
+    
+    let percent = (Math.floor(e.offsetX) / allWidth) * 100; // 0 ~ 100 (%)
+    
+    progressFilled.style.flexBasis = `${percent}%`;
+    const allWidth = progress.offsetWidth;
+    let current = (e.offsetX / allWidth) * video.duration; // 影片長
+    video.currentTime = current;
+    // console.log(video.currentTime)
 }
 
 function handleSkip(){
-    video.pause();
+    // video.pause();
     let time = parseInt(this.dataset.skip)
     // console.log(this)
     // console.log(time)
@@ -40,16 +61,19 @@ function handleSkip(){
 }
 
 function handleRange(){
-    console.log(this.name) // this = input
-    console.log(this.value)
+    // console.log(this.name) // this = input
+    // console.log(this.value)
     video[this.name] = this.value;
-    console.log(video.volume, )
-    console.log(video.playbackRate)
+    console.log(`volume ${video.volume}`)
+    console.log(`playbackRate ${video.playbackRate}`)
 }
 
 
 toggle.addEventListener('click', handlePlayToggle)
-progress.addEventListener('progress', handleProgress)
+progress.addEventListener('mousedown', handleProgress)
+progress.addEventListener('timeupdate', handleProgress)
+progress.addEventListener('click', handleProgressClick)
+
 dataButtons.forEach(btn => btn.addEventListener('click', handleSkip))
 inputRanges.forEach(input => input.addEventListener('change', handleRange))
 
@@ -71,7 +95,7 @@ inputRanges.forEach(input => input.addEventListener('change', handleRange))
 
 
 progress.style.border = '1px solid #fcc';
-// progressBar.style.border = '1px solid #ff0000';
+// control.style.border = '1px solid #ff0000';
 
 toggle.style.border = '1px solid green';
 
