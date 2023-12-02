@@ -16,62 +16,59 @@ function handlePlayToggle(){
         video.play()
     } else {
         video.pause()
-    }
-    
-    // const method = video.paused ? 'play' : 'pause'
-    // video[method]()
-    // console.log(video[method]())
+    }    
+}
 
+function updateBtn(){
     // const icon = video.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
     // toggle.append = icon
     const icon = video.paused ? '►' : '||';
     toggle.textContent = icon;
-    
 }
 
+
 function handleProgress(){
-    console.log('progress');
     let percent = (video.currentTime / video.duration) * 100
-    // console.log(video.currentTime)
-    // console.log(video.duration)
     progressFilled.style.flexBasis = `${percent}%`; // 0 ~ 100 (%)
-    // console.log(`percent: ${percent}%`)
 }
 
 function handleProgressClick(e) {
-    // let percent = video.duration
-    // video.currentTime = percent;
-    // console.log(e)
-    
-    let percent = (Math.floor(e.offsetX) / allWidth) * 100; // 0 ~ 100 (%)
-    
-    progressFilled.style.flexBasis = `${percent}%`;
     const allWidth = progress.offsetWidth;
+    let percent = (Math.floor(e.offsetX) / allWidth) * 100; // 0 ~ 100 (%)
+    progressFilled.style.flexBasis = `${percent}%`;
     let current = (e.offsetX / allWidth) * video.duration; // 影片長
     video.currentTime = current;
-    // console.log(video.currentTime)
 }
 
 function handleSkip(){
-    // video.pause();
-    let time = parseInt(this.dataset.skip)
-    // console.log(this)
-    // console.log(time)
+    // parseInt vs. parseFloat ???
+    let time = parseFloat(this.dataset.skip)
     video.currentTime += time;
+    handleProgress()
 }
 
 function handleRange(){
-    // console.log(this.name) // this = input
-    // console.log(this.value)
     video[this.name] = this.value;
-    console.log(`volume ${video.volume}`)
-    console.log(`playbackRate ${video.playbackRate}`)
 }
 
 
+
+
+
+
+
+
+
+// click togglePlay
+// play updateBtn
+// pause updateBtn
+// timeupdate handleProgress
+
+video.addEventListener('click', handlePlayToggle)
 toggle.addEventListener('click', handlePlayToggle)
-progress.addEventListener('mousedown', handleProgress)
-progress.addEventListener('timeupdate', handleProgress)
+video.addEventListener('play', updateBtn)
+video.addEventListener('pause', updateBtn)
+video.addEventListener('timeupdate', handleProgress)
 progress.addEventListener('click', handleProgressClick)
 
 dataButtons.forEach(btn => btn.addEventListener('click', handleSkip))
@@ -85,27 +82,6 @@ inputRanges.forEach(input => input.addEventListener('change', handleRange))
 
 
 
-
-
-
-
-
-
-
-
-
-progress.style.border = '1px solid #fcc';
-// control.style.border = '1px solid #ff0000';
-
-toggle.style.border = '1px solid green';
-
-dataButtons.forEach((dataBtn)=>{
-    dataBtn.style.border = '1px solid #e27bff';
-})
-
-inputRanges.forEach((input)=>{
-    input.style.border = '1px solid #7becff';
-})
 
 
 
