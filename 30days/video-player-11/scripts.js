@@ -32,7 +32,7 @@ function handleProgress(){
     progressFilled.style.flexBasis = `${percent}%`; // 0 ~ 100 (%)
 }
 
-function handleProgressClick(e) {
+function handleProgressScrub(e) {
     const allWidth = progress.offsetWidth;
     let percent = (Math.floor(e.offsetX) / allWidth) * 100; // 0 ~ 100 (%)
     progressFilled.style.flexBasis = `${percent}%`;
@@ -69,14 +69,15 @@ toggle.addEventListener('click', handlePlayToggle)
 video.addEventListener('play', updateBtn)
 video.addEventListener('pause', updateBtn)
 video.addEventListener('timeupdate', handleProgress)
-progress.addEventListener('click', handleProgressClick)
 
 dataButtons.forEach(btn => btn.addEventListener('click', handleSkip))
 inputRanges.forEach(input => input.addEventListener('change', handleRange))
 
-
-
-
+progress.addEventListener('click', handleProgressScrub)
+let checkMousedown = false;
+progress.addEventListener('mousemove', (e)=>{ checkMousedown && handleProgressScrub(e)}) // !!?
+progress.addEventListener('mousedown', ()=> { checkMousedown = true})
+progress.addEventListener('mouseup', ()=> {checkMousedown = false})
 
 
 
