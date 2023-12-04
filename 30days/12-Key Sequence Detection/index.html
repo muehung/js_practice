@@ -7,6 +7,32 @@
     <link rel="icon" href="https://fav.farm/🔥" />
   </head>
   <body>
-    <script></script>
+    <script>
+      const pressed = [];
+      const answer = 'aloha';
+      window.addEventListener('keyup',(e)=>{
+        console.log(e.key)
+        pressed.push(e.key);
+        pressed.splice(-answer.length - 1, pressed.length - answer.length);
+
+        if(pressed.join('').includes(answer)){
+          console.log('Ding Ding!');
+          cornify_add()
+        }
+        console.log(pressed)
+        
+        // for(i=0; i>pressed.length; i++){
+        //   if(pressed[i] = answer.slice(i,i+1)) {
+        //     console.log(i)
+        //   }
+        // }
+        
+      })
+      
+
+
+      // https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+      // https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+    </script>
   </body>
 </html>
