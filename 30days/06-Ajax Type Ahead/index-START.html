@@ -18,6 +18,46 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+const search = document.querySelector('.search')
+// const searchValue = search.value
+const cities = [];
+const suggestions = document.querySelector('.suggestions')
+
+async function getRes(){
+    try {
+      const response = await fetch(endpoint)
+      // console.log(response)
+      const data = await response.json()
+      console.log(data)
+      return cities.push(...data)
+    } catch(error){
+      console.error(error)
+    }
+  }
+
+  getRes()
+
+
+  function findMatchData(wordMatch, cities){
+    // const data1 = getRes()
+    // data1.filter((data)=> {searchValue})
+    return cities.filter((place)=>{
+      const regex = new RegExp(wordMatch, 'gi');
+      return place.city.match(regex) || place.state.match(regex)
+    })
+  }
+
+  function displayMatch(){
+    // console.log(this.value)
+    const matchArray = findMatchData(this.value, cities)
+    console.log(matchArray)
+  }
+  
+  search.addEventListener('change', displayMatch)
+
+
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
 </script>
 </body>
 </html>
