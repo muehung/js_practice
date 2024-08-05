@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <div id="app">
+        <div class="">{{ num }}</div>
+        <button type="button" v-on:click="addOnce">Click me</button>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+
+        console.log(Vue) // cdn use "V"ue, others use "vue"
+        const { createApp, ref } = Vue
+
+        createApp({
+            setup(){
+                const num = ref(1);
+
+                console.log(num.value);
+                function addOnce(){
+                    num.value ++
+                }
+                return {
+                    num,
+                    addOnce
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
